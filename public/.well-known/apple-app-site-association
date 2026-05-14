@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID_PLACEHOLDER.com.core618.myastralmap"],
+        "components": [
+          {
+            "/": "/abrir-audio/*",
+            "comment": "Open audio player at slug"
+          }
+        ]
+      }
+    ]
+  }
+}
