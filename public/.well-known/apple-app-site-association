@@ -2,7 +2,7 @@
   "applinks": {
     "details": [
       {
-        "appIDs": ["TEAMID_PLACEHOLDER.com.core618.myastralmap"],
+        "appIDs": ["U6K5LLRF5C.com.core618.myastralmap"],
         "components": [
           {
             "/": "/abrir-audio/*",
