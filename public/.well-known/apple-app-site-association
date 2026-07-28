@@ -2,11 +2,15 @@
   "applinks": {
     "details": [
       {
-        "appIDs": ["TEAMID_PLACEHOLDER.com.core618.myastralmap"],
+        "appIDs": ["U6K5LLRF5C.com.core618.myastralmap"],
         "components": [
           {
             "/": "/abrir-audio/*",
             "comment": "Open audio player at slug"
+          },
+          {
+            "/": "/reset-password/*",
+            "comment": "Open password reset screen with token (MAM-0175)"
           }
         ]
       }
