@@ -7,6 +7,10 @@
           {
             "/": "/abrir-audio/*",
             "comment": "Open audio player at slug"
+          },
+          {
+            "/": "/reset-password/*",
+            "comment": "Open password reset screen with token (MAM-0175)"
           }
         ]
       }
