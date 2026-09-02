@@ -1,0 +1,13 @@
+# Cloudflare Pages — headers por rota.
+#
+# O AASA não tem extensão de arquivo, então o Pages serve como
+# `application/octet-stream`. A Apple documenta que o arquivo deve ser servido
+# como `application/json`; o iOS moderno costuma tolerar, mas universal link é
+# infra crítica (reset de senha + deep link de áudio) e o custo de garantir é zero.
+/.well-known/apple-app-site-association
+  Content-Type: application/json
+
+# assetlinks.json já sai como application/json pela extensão, mas fixamos por
+# simetria — o Android exige explicitamente esse content-type.
+/.well-known/assetlinks.json
+  Content-Type: application/json

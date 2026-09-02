@@ -4,9 +4,87 @@
   <meta charset="utf-8">
   <title>MyAstralMap App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="refresh" content="0; url=https://myastralmap.com/">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0A0A0A; color: #EDEDEB; margin: 0; padding: 40px 24px; text-align: center; }
+    h1 { font-size: 22px; margin-bottom: 12px; }
+    p { font-size: 15px; line-height: 22px; color: #999; }
+    a { display: inline-block; margin: 16px 8px; padding: 12px 20px; background: #FF2F00; color: #fff; border-radius: 24px; text-decoration: none; font-weight: 600; }
+    a.secondary { background: transparent; border: 1px solid #999; color: #EDEDEB; }
+    .aviso { margin-top: 28px; font-size: 13px; color: #777; }
+    #conteudo { display: none; }
+  </style>
 </head>
 <body>
-  <p>Redirecionando para <a href="https://myastralmap.com/">myastralmap.com</a>...</p>
+  <div id="conteudo">
+    <h1 id="titulo"></h1>
+    <p id="texto"></p>
+    <a id="abrir" href="#">Abrir no MyAstralMap</a>
+    <p class="aviso">Ainda não tem o app? Instale e abra este mesmo link outra vez.</p>
+    <a class="secondary" href="https://play.google.com/store/apps/details?id=com.core618.myastralmap">Google Play</a>
+    <a class="secondary" href="https://apps.apple.com/app/myastralmap/id6780616411">App Store</a>
+    <p class="aviso" id="rodape"></p>
+  </div>
+
+  <noscript>
+    <h1>Abrir no MyAstralMap</h1>
+    <p>Ative o JavaScript, ou instale o app e abra este link outra vez.</p>
+    <a href="https://play.google.com/store/apps/details?id=com.core618.myastralmap">Google Play</a>
+    <a class="secondary" href="https://apps.apple.com/app/myastralmap/id6780616411">App Store</a>
+  </noscript>
+
+  <script>
+    // MAM-0500 — esta é a página de recurso do site de app links, e é servida
+    // para QUALQUER caminho que não corresponda a um ficheiro. Os dois caminhos
+    // que importam trazem um segmento variável no fim
+    // (`/reset-password/<token>`, `/abrir-audio/<slug>`), portanto nunca
+    // correspondem a ficheiro nenhum e acabam sempre aqui.
+    //
+    // Antes, o conteúdo inteiro desta página era um `meta refresh` para a
+    // homepage. Quem pedia a reposição da senha no Android clicava no link do
+    // email e ia parar ao site: sem contorno possível, porque quem perde a
+    // senha não volta a entrar.
+    //
+    // Tentou-se primeiro resolver com reescritas `200` no `_redirects`, mas o
+    // splat não apanhava os caminhos com segmento variável (verificado no
+    // deploy: `/reset-password/` servia a página certa, `/reset-password/abc`
+    // não). Fazer a decisão aqui não depende dessa semântica: esta página é o
+    // recurso, logo é sempre alcançada.
+    (function () {
+      var partes = window.location.pathname.split("/").filter(Boolean);
+      var seccao = partes[0] || "";
+      var valor = partes.length > 1 ? partes[partes.length - 1] : "";
+
+      var titulo = document.getElementById("titulo");
+      var texto = document.getElementById("texto");
+      var botao = document.getElementById("abrir");
+      var rodape = document.getElementById("rodape");
+      var alvo = null;
+
+      if (seccao === "reset-password" && valor) {
+        titulo.textContent = "Redefinir senha";
+        texto.innerHTML = "Se o app está instalado, ele deveria ter aberto com o formulário de nova senha.<br>Se não abriu, toque no botão abaixo.";
+        rodape.textContent = "O link de redefinição expira. Se já não funcionar, peça um novo no app em “Esqueci minha senha”.";
+        alvo = "myastralmap:///reset-password/" + encodeURIComponent(valor);
+      } else if (seccao === "abrir-audio" && valor) {
+        titulo.textContent = "Abrir no MyAstralMap";
+        texto.textContent = "Se o app está instalado, ele deveria ter aberto automaticamente.";
+        rodape.textContent = "";
+        alvo = "myastralmap:///abrir-audio/" + encodeURIComponent(valor);
+      }
+
+      if (!alvo) {
+        // Qualquer outro caminho: o site, como era antes.
+        window.location.replace("https://myastralmap.com/");
+        return;
+      }
+
+      botao.setAttribute("href", alvo);
+      document.getElementById("conteudo").style.display = "block";
+      // Tentativa automática. Se o app estiver instalado, abre sozinho e esta
+      // página nem chega a ser lida; se não, nada acontece e ficam as lojas à
+      // vista. Sem `replace`, para não partir o botão de voltar do browser.
+      try { window.location.href = alvo; } catch (e) { /* noop */ }
+    })();
+  </script>
 </body>
 </html>
