@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>Redefinir senha no MyAstralMap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0A0A0A; color: #EDEDEB; margin: 0; padding: 40px 24px; text-align: center; }
+    h1 { font-size: 22px; margin-bottom: 12px; }
+    p { font-size: 15px; line-height: 22px; color: #999; }
+    a { display: inline-block; margin: 16px 8px; padding: 12px 20px; background: #FF2F00; color: #fff; border-radius: 24px; text-decoration: none; font-weight: 600; }
+    a.secondary { background: transparent; border: 1px solid #999; color: #EDEDEB; }
+    .aviso { margin-top: 28px; font-size: 13px; color: #777; }
+  </style>
+</head>
+<body>
+  <h1>Redefinir senha</h1>
+  <p>
+    Se o app está instalado, ele deveria ter aberto automaticamente com o
+    formulário de nova senha.<br>Se não abriu, toque no botão abaixo.
+  </p>
+
+  <a id="abrir" href="#">Abrir no MyAstralMap</a>
+
+  <p class="aviso" id="semApp">
+    Ainda não tem o app? Instale e abra este mesmo link outra vez.
+  </p>
+  <a class="secondary" href="https://play.google.com/store/apps/details?id=com.core618.myastralmap">Google Play</a>
+  <!-- ID real, do `ascAppId` em front/mobile/eas.json. O `abrir-audio/index.html`
+       trazia um marcador de zeros nunca substituído; corrigido no mesmo PR. -->
+  <a class="secondary" href="https://apps.apple.com/app/myastralmap/id6780616411">App Store</a>
+
+  <p class="aviso">
+    O link de redefinição expira. Se já não funcionar, peça um novo no app em
+    “Esqueci minha senha”.
+  </p>
+
+  <script>
+    // O token vem no caminho: /reset-password/<token>. Reconstrói o deep link
+    // por esquema próprio, que funciona mesmo quando a verificação de App Links
+    // do Android ainda não passou (ela é feita na instalação e fica em cache).
+    //
+    // Esta página só é vista quando o App Link NÃO abriu o app. Ela existe para
+    // que ninguém fique sem conseguir repor a senha: antes daqui, o utilizador
+    // era atirado para a homepage do site e o fluxo morria (MAM-0500).
+    (function () {
+      var partes = window.location.pathname.split("/").filter(Boolean);
+      var token = partes.length > 1 ? partes[partes.length - 1] : "";
+      var alvo = token
+        ? "myastralmap:///reset-password/" + encodeURIComponent(token)
+        : "myastralmap:///";
+      var botao = document.getElementById("abrir");
+      botao.setAttribute("href", alvo);
+      // Tentativa automática: se o app estiver instalado, abre sozinho e esta
+      // página nunca chega a ser lida. Se não estiver, nada acontece e ficam
+      // as lojas à vista. Sem `location.replace` para não partir o voltar.
+      try { window.location.href = alvo; } catch (e) { /* noop */ }
+    })();
+  </script>
+</body>
+</html>
