@@ -1,0 +1,17 @@
+# Cloudflare Pages — reescritas por rota.
+#
+# Os dois caminhos que interessam trazem um segmento variável no fim:
+#   /reset-password/<token>
+#   /abrir-audio/<slug>
+#
+# Sem estas linhas, o Pages não encontra ficheiro para esses caminhos e serve o
+# `index.html` da raiz, que é um `meta refresh` para a homepage. Era esse o
+# efeito visível do defeito da MAM-0500: a pessoa clicava no link de reposição
+# de senha e ia parar ao site. Publicar a página `/reset-password/index.html`
+# não chegou — ela só respondia no caminho exacto, sem o token.
+#
+# O código **200** é reescrita, não redireccionamento: o URL fica igual no
+# browser, e é isso que permite ao JavaScript da página ler o token de
+# `window.location.pathname`. Um 301/302 mudaria o URL e perderia o token.
+/reset-password/*  /reset-password/index.html  200
+/abrir-audio/*     /abrir-audio/index.html     200
