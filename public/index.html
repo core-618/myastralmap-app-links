@@ -72,10 +72,35 @@
         alvo = "myastralmap:///abrir-audio/" + encodeURIComponent(valor);
       }
 
+      // MAM-0515 — sem alvo reconhecido, abre a APP, nunca o site.
+      //
+      // Aqui estava `window.location.replace("https://myastralmap.com/")`, e foi
+      // esse salto que partiu a reposição de senha de uma utilizadora a 17/09:
+      // pediu o link às 10:50:02, tocou 43 segundos depois — com o token ainda
+      // válido — e foi parar à página inicial do site, sem uma palavra a
+      // explicar porquê. Dos logs: `GET /` em myastralmap.com com referer
+      // `app.myastralmap.com`, duas vezes, às 10:50:45 e 10:50:51. Tentou duas
+      // vezes e desistiu.
+      //
+      // O salto disparava sempre que o caminho chegava sem o segmento final —
+      // `/reset-password/`, `/reset-password`, ou a raiz. Medido contra o
+      // servidor real: as três formas caíam no site; só com o token completo
+      // e que abria a app.
+      //
+      // **Quem chega a esta página está a tentar entrar na app.** Mandá-lo para
+      // a homepage é a pior saída possível: perde o contexto, não percebe o que
+      // falhou, e quem perdeu a senha continua sem conseguir entrar. Por isso o
+      // recurso passa a ser a própria app, sem caminho — que é o pior caso
+      // aceitável: a pessoa fica dentro do produto e pode pedir outro link.
       if (!alvo) {
-        // Qualquer outro caminho: o site, como era antes.
-        window.location.replace("https://myastralmap.com/");
-        return;
+        titulo.textContent = "Abrir no MyAstralMap";
+        texto.innerHTML =
+          "Este link chegou incompleto e não deu para saber o que abrir.<br>" +
+          "Toque no botão para abrir o app.";
+        rodape.textContent =
+          "Se estava a repor a senha, peça um link novo no app em “Esqueci minha senha” — " +
+          "e abra-o assim que chegar.";
+        alvo = "myastralmap:///";
       }
 
       botao.setAttribute("href", alvo);
